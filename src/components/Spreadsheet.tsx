@@ -1,16 +1,32 @@
 import Cell from "./Cell";
 import { CellContent } from "@/types/spreadsheet"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 
 
 export default function Spreadsheet() {
 
-    const [cellContents, setCellContents] = useState<Array<Array<CellContent>>>([
-        [1, 2, 3,],
-        [4, 5, 6,],
-        [7, 8, 9,],
+    const [cellContents, setCellContents] = useState<
+        Array<Array<CellContent>>
+    >([
+        [1, 20, 3],
+        [4, 5, 6],
+        [7, 80, 9],
+        [4, 5, 6],
     ]);
+
+    const persist = () => {
+        const data = JSON.stringify(cellContents);
+        window.localStorage.setItem('cells', data);
+    };
+
+    useEffect(() => {
+        const persistedData = window.localStorage.getItem('cells');
+        if (persistedData) {
+            setCellContents(JSON.parse(persistedData));
+        }
+    }, [])
+
 
     const getValue = (row: number, col: number): CellContent => {
         return cellContents[row]?.[col] ?? "";
@@ -65,6 +81,8 @@ export default function Spreadsheet() {
             <br />
             <button onClick={() => setCellContents(cellContents.map(row => [...row, 0]))}>+ column</button>
             <button onClick={() => setCellContents(cellContents.map(row => row.slice(0, -1)))}>- column</button>
+            <br />
+            <button onClick={persist}>Save</button>
 
         </>
 

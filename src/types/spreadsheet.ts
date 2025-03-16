@@ -1,2 +1,2 @@
 
-export type CellContent = string | number
+export type CellContent = string | number;
