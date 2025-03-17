@@ -16,16 +16,23 @@ export default function Spreadsheet() {
     ]);
 
     const persist = () => {
-        const data = JSON.stringify(cellContents);
-        window.localStorage.setItem('cells', data);
+        fetch("/api/cells", {
+            method: "POST",
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({ cells: cellContents }),
+        });
     };
 
     useEffect(() => {
-        const persistedData = window.localStorage.getItem('cells');
-        if (persistedData) {
-            setCellContents(JSON.parse(persistedData));
-        }
-    }, [])
+        fetch("/api/cells").then((res) =>
+            res.text().then((s) => {
+                const data = JSON.parse(s);
+                if (data.cells) {
+                    setCellContents(data.cells);
+                }
+            })
+        );
+    }, []);
 
 
     const getValue = (row: number, col: number): CellContent => {
